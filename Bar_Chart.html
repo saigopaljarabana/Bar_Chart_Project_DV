@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  <body>
+    <!-- <h1>Top 10 Run Getters(batsmen) for the last 5 years in T20 Internationals</h1> -->
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v6.js"></script>
+
+<button onclick="update(cric1),changeColor('#14FF69')">2022</button>
+<button onclick="update(cric2),changeColor('#FFD700')">2021</button>
+<button onclick="update(cric3),changeColor('#DA70D6')">2020</button>
+<button onclick="update(cric4),changeColor('#800000')">2019</button>
+<button onclick="update(cric5),changeColor('#FF7F50')">2018</button>
+
+<div id="cricket" style="text-align: center;"></div>></div>
+<style>
+   button {
+      background: #A9A9A9;
+      border: 1px solid lightgray;
+      border-radius: 20px;
+      padding: 12px 20px;
+      transition: all 0.5s ease-in-out;
+      /* const margin = {top: 1, right: 90, bottom: 90, left: 10}; */
+   }
+      button:hover {
+      cursor: pointer;
+      background:rgb(29, 211, 224);
+      border: 1px solid rgb(9, 8, 8);
+    } 
+</style>
+
+</body>
+</head>
+<script>
+
+
+   //create 2 data_set
+   const cric1 = [
+    {Player: "Surya Kumar", Runs: 1164},
+     {Player: "Mohammad Rizwan", Runs: 996},
+     {Player: "Virat Kohli", Runs: 781},
+     {Player: "Sikandar Raza", Runs: 735},
+     {Player: "Babar Azam", Runs: 735},
+     {Player: "GD Phillips", Runs: 716},
+     {Player: "P Nissanka", Runs: 713},
+     {Player: "Rohit Sharma", Runs: 656},
+     {Player: "DS Airee", Runs: 626},
+    {Player: "A Balbirnie", Runs: 617}
+  ];
+  
+  const cric2 = [
+    {Player: "Mohammad Rizwan", Runs: 1326},
+     {Player: "Babar Azam", Runs: 939},
+     {Player: "Guptil", Runs: 678},
+     {Player: "M Marsh", Runs: 627},
+     {Player: "Jos Buttler", Runs: 589},
+     {Player: "Mohammad Nain", Runs: 575},
+     {Player: "Markram", Runs: 570},
+     {Player: "Q de kock", Runs: 524},
+     {Player: "Virat Kohli", Runs: 500},
+    {Player: "N Pooran", Runs: 484}
+  ];
+
+  const cric3 = [
+    {Player: "Mohammad Hafeez", Runs: 415},
+     {Player: "KL Rahul", Runs: 404},
+     {Player: "David Malan", Runs: 397},
+     {Player: "Tim Siefiert", Runs: 352},
+     {Player: "Kamran Khan", Runs: 335},
+     {Player: "Jonny Bairstow", Runs: 329},
+     {Player: "Virat Kohli", Runs: 295},
+     {Player: "Jos Butler", Runs: 291},
+     {Player: "Van der Dussen", Runs: 288},
+    {Player: "Q de kock", Runs: 285}
+  ];
+
+  const cric4 = [
+    {Player: "Paul Striling", Runs: 748},
+     {Player: "Kevin O'Brien", Runs: 729},
+     {Player: "MP O'Dowd", Runs: 702},
+     {Player: "BN Cooper", Runs: 637},
+     {Player: "A Balbirnie", Runs: 601},
+     {Player: "TP Ura ", Runs: 572},
+     {Player: "Virat Kohli", Runs: 541},
+     {Player: "Jos Butler", Runs: 526},
+     {Player: "Rohit Sharma", Runs: 466},
+    {Player: "Babar Azam", Runs: 428}
+  ];
+
+  const cric5 = [
+    {Player: "S Dhawan", Runs: 689},
+     {Player: "Rohit Sharma", Runs: 590},
+     {Player: "Fakhar Zamam", Runs: 576},
+     {Player: "Babar Azam", Runs: 563},
+     {Player: "Aaron Finch", Runs: 531},
+     {Player: "DJ Short", Runs: 515},
+     {Player: "Colin Munro", Runs: 506},
+     {Player: "Glen Maxwell", Runs: 500},
+     {Player: "Mahmudullah", Runs: 414},
+    {Player: "Guptil", Runs: 410}
+  ];
+
+
+  
+  // set the dimensions and margins of the graph
+  var margin = {top: 20, right: 100, bottom: 60, left: 60},
+      width = 1000 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom;
+  
+  // append the svg object to the body of the page
+  const svg = d3.select("#cricket")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`)
+    
+  
+  // Initialize the X axis
+  const x = d3.scaleBand()
+    .range([ 0, width ])
+    .padding(0.5);
+  const xAxis = svg.append("g")
+    .attr("transform", `translate(0,${height})`)
+  
+  // Initialize the Y axis
+  const y = d3.scaleLinear()
+    .range([ height, 50]);
+  const yAxis = svg.append("g")
+    .attr("class", "myyaxis")
+  
+
+  function update(data) {
+  
+    // Update the X axis
+    x.domain(data.map(d => d.Player))
+    xAxis.call(d3.axisBottom(x))
+  
+    // Update the Y axis
+    y.domain([50, d3.max(data, d => d.Runs) ]);
+    yAxis.transition().duration(1000).call(d3.axisLeft(y));
+  
+    var c = svg.selectAll("rect")
+      .data(data)
+  
+      .join("rect") // Add a new rect for each new elements
+      .transition()
+      .duration(1000)
+        .attr("x", d => x(d.Player))
+        .attr("y", d => y(d.Runs))
+        .attr("width", x.bandwidth())
+        .attr("height", d => height - y(d.Runs))
+        .attr("fill", "#808080")
+        .attr("class","c");
+    
+    /*var xAxisGroup = svg.select(".xAxis");
+// Append a text element for the x-axis label
+    xAxisGroup.append("text")
+        .attr("class", "label")
+        .attr("x", width / 2)
+        .attr("y", 555)
+        .style("text-anchor", "middle")
+        .text("X-Axis Label");*/
+
+        svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x",0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .style("font-size","20px")
+        .text("Runs");
+
+        svg.append("text")
+            .attr("class","label")
+            .attr("transform",`translate(${width/2}, ${(height)+50})` )
+            .style("text-anchor", "middle")
+            .style("font-size","20px")
+            .text("Player");
+
+
+
+        
+
+  }
+  function changeColor(color){
+  d3.selectAll("rect")
+    .transition(50)
+    .duration(1000)
+    .style("fill", color)
+}
+  update(cric2)
+  
+  </script>
